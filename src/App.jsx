@@ -2,15 +2,11 @@ import styled from 'styled-components'
 import GlobalStyles from './styles/GlobalStyles.js'
 import Button from './ui/Button.jsx'
 import Input from './ui/Input.jsx'
+import Heading from './ui/Heading.jsx'
+import Row from './ui/Row.jsx'
 
-const H1 = styled.h1`
-  font-size: 30px;
-  font-weight: 700;
-  background-color: yellow;
-`
 const StyledApp = styled.div`
   padding: 20px;
-  background-color: orangered;
 `
 
 const App = () => {
@@ -18,9 +14,26 @@ const App = () => {
     <>
       <GlobalStyles />
       <StyledApp>
-        <H1>Hello World!</H1>
-        <Button>Click me</Button>
-        <Input type="number" placeholder="Enter a number" />
+        <Row>
+          <Row type={`horizontal`}>
+            <Heading as={`h1`}>The wild oasis!</Heading>
+            <div>
+              <Heading as={`h2`}>check in and out!</Heading>
+              <Button>Check in</Button>
+              <Button variation={`secondary`} size={`small`}>
+                Check out
+              </Button>
+            </div>
+          </Row>
+
+          <Row type="vertical">
+            <Heading as={`h3`}>Form</Heading>
+            <form>
+              <Input type="number" placeholder="Enter a number" />
+              <Input type="number" placeholder="Enter a number" />
+            </form>
+          </Row>
+        </Row>
       </StyledApp>
     </>
   )
