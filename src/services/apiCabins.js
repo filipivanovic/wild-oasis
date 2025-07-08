@@ -22,33 +22,44 @@ export const deleteCabin = async id => {
   return data
 }
 
-export const createCabin = async newCabin => {
-  const imageName = `${Math.random()}-${newCabin.image.name}`.replaceAll('/', '')
-  const imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`
+export const createEditCabin = async (newCabin, id) => {
+  const cabinId = id || newCabin.id
+  const isEditing = Boolean(cabinId)
 
-  console.log(imagePath)
+  const hasImagePath = typeof newCabin.image === 'string' && newCabin.image.startsWith(supabaseUrl)
+  const imageName = `${Math.random()}-${newCabin.image?.name || ''}`.replaceAll('/', '')
+  const imagePath = hasImagePath
+    ? newCabin.image
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`
 
-  const { data, error } = await supabase
-    .from('cabins')
-    .insert([{ ...newCabin, image: imagePath }])
-    .select()
+  let query = supabase.from('cabins')
 
-  // https://gxgjesglnrpqkakhmnqp.supabase.co/storage/v1/object/public/cabin-images0.10821671588046933-cabin-002.jpg
-  // https://gxgjesglnrpqkakhmnqp.supabase.co/storage/v1/object/public/cabin-images//0.10821671588046933-cabin-002.jpg
+  if (!isEditing) {
+    const { id, ...cabinData } = newCabin
+    query = query.insert([{ ...cabinData, image: imagePath }])
+  } else {
+    query = query.update({ ...newCabin, image: imagePath }).eq('id', cabinId)
+  }
+
+  const { data, error } = await query.select().single()
 
   if (error) {
     console.error(error)
-    throw new Error('Cabin could not be created')
+    throw new Error(isEditing ? 'Cabin could not be updated' : 'Cabin could not be created')
   }
 
-  const { error: storageError } = await supabase.storage
-    .from('cabin-images')
-    .upload(imageName, newCabin.image)
+  if (!hasImagePath) {
+    const { error: storageError } = await supabase.storage
+      .from('cabin-images')
+      .upload(imageName, newCabin.image)
 
-  if (storageError) {
-    await supabase.from('cabins').delete().eq('id', data.id)
-    console.error(storageError)
-    throw new Error('Cabin image could not be uploaded')
+    if (storageError) {
+      if (!isEditing) {
+        await supabase.from('cabins').delete().eq('id', data.id)
+      }
+      console.error(storageError)
+      throw new Error('Cabin image could not be uploaded')
+    }
   }
 
   return data
