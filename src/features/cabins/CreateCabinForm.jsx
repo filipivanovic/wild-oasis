@@ -1,5 +1,3 @@
-import styled from 'styled-components'
-
 import Input from '../../ui/Input'
 import Form from '../../ui/Form.jsx'
 import Button from '../../ui/Button.jsx'
@@ -9,42 +7,7 @@ import { useForm } from 'react-hook-form'
 import { createCabin } from '../../services/apiCabins.js'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
-
-const FormRow = styled.div`
-  display: grid;
-  align-items: center;
-  grid-template-columns: 24rem 1fr 1.2fr;
-  gap: 2.4rem;
-
-  padding: 1.2rem 0;
-
-  &:first-child {
-    padding-top: 0;
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-
-  &:not(:last-child) {
-    border-bottom: 1px solid var(--color-grey-100);
-  }
-
-  &:has(button) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 1.2rem;
-  }
-`
-
-const Label = styled.label`
-  font-weight: 500;
-`
-
-const Error = styled.span`
-  font-size: 1.4rem;
-  color: var(--color-red-700);
-`
+import FormRow from '../../ui/FormRow.jsx'
 
 function CreateCabinForm() {
   const { register, handleSubmit, reset, getValues, formState } = useForm()
@@ -76,18 +39,19 @@ function CreateCabinForm() {
 
   return (
     <Form onSubmit={handleSubmit(onSubmit, onError)}>
-      <FormRow>
-        <Label htmlFor="name">Cabin name</Label>
+      <FormRow error={errors?.name?.message} label={'Cabin name'} disabled={isCreating}>
         <Input
           type="text"
           id="name"
           {...register('name', { required: 'This field is required' })}
         />
-        {errors?.name?.message && <Error>{errors.name.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="maxCapacity">Maximum capacity</Label>
+      <FormRow
+        error={errors?.maxCapacity?.message}
+        label={'Maximum capacity'}
+        disabled={isCreating}
+      >
         <Input
           type="number"
           id="maxCapacity"
@@ -96,11 +60,9 @@ function CreateCabinForm() {
             min: { value: 1, message: 'Capacity must be at least 1 guest' }
           })}
         />
-        {errors?.maxCapacity?.message && <Error>{errors.maxCapacity.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="regularPrice">Regular price</Label>
+      <FormRow error={errors?.regularPrice?.message} label={'Regular price'} disabled={isCreating}>
         <Input
           type="number"
           id="regularPrice"
@@ -109,11 +71,9 @@ function CreateCabinForm() {
             min: { value: 1, message: 'Minimum capacity is 1 guest' }
           })}
         />
-        {errors?.regularPrice?.message && <Error>{errors.regularPrice.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="discount">Discount</Label>
+      <FormRow error={errors?.discount?.message} label={'Discount'} disable={isCreating}>
         <Input
           type="number"
           id="discount"
@@ -121,25 +81,22 @@ function CreateCabinForm() {
           {...register('discount', {
             required: 'This field is required',
             validate: value =>
-              value <= getValues().regularPrice || 'Discount should be less than regular price'
+              Number(value) <= Number(getValues().regularPrice) ||
+              'Discount should be less than regular price'
           })}
         />
-        {errors?.discount?.message && <Error>{errors.discount.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="description">Description for website</Label>
+      <FormRow error={errors?.description?.message} label={'Description'} disabled={isCreating}>
         <Textarea
           type="number"
           id="description"
           defaultValue=""
           {...register('description', { required: 'This field is required' })}
         />
-        {errors?.description?.message && <Error>{errors.description.message}</Error>}
       </FormRow>
 
-      <FormRow>
-        <Label htmlFor="image">Cabin photo</Label>
+      <FormRow label={'Cabin photo'}>
         <FileInput id="image" accept="image/*" />
       </FormRow>
 
