@@ -72,7 +72,7 @@ const MainNav = () => {
         <li>
           <StyledNavLink to="/cabins">
             <HiHomeModern />
-            <span>Bookings</span>
+            <span>Cabins</span>
           </StyledNavLink>
         </li>
         <li>
