@@ -41,7 +41,7 @@ const Discount = styled.div`
 `
 
 const CabinRow = ({ cabin }) => {
-  const { name, maxCapacity, regularPrice, discount, description, image } = cabin
+  const { name, maxCapacity, regularPrice, discount, image } = cabin
 
   return (
     <TableRow role={`row`}>
@@ -50,7 +50,6 @@ const CabinRow = ({ cabin }) => {
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{formatCurrency(regularPrice)}</Price>
       <Discount>{formatCurrency(discount)}% off</Discount>
-      <div>{description}</div>
       <button>Delete</button>
     </TableRow>
   )
