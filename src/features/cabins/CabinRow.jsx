@@ -4,6 +4,7 @@ import { formatCurrency } from '../../utils/helpers.js'
 import { useState } from 'react'
 import CreateCabinForm from './CreateCabinForm.jsx'
 import { useDeleteCabin } from './useDeleteCabin.js'
+import { HiPencil, HiTrash } from 'react-icons/hi'
 
 const TableRow = styled.div`
   display: grid;
@@ -59,9 +60,11 @@ const CabinRow = ({ cabin }) => {
         <Price>{formatCurrency(regularPrice)}</Price>
         {discount ? <Discount>{discount}% off</Discount> : <span>&mdash;</span>}
         <div>
-          <button onClick={() => setShowForm(show => !show)}>Edit</button>
+          <button onClick={() => setShowForm(show => !show)}>
+            <HiPencil />
+          </button>
           <button disabled={isDeleting} onClick={() => deleteCabin(cabinId)}>
-            Delete
+            <HiTrash />
           </button>
         </div>
       </TableRow>
